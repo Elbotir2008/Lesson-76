@@ -8,7 +8,7 @@ const Students = (props) => {
   const dispatch = useDispatch();
   const { loading, users, error } = useSelector((state) => state.user);
   // console.log(users);
-  let sliceUsers = users.slice(0, -50);
+  let sliceUsers = users.slice(-5, users.length);
   useEffect(() => {
     dispatch(fetchUsers());
   }, [dispatch]);
@@ -32,9 +32,9 @@ const Students = (props) => {
           </tr>
         </thead>
         <tbody>
-          {sliceUsers.map((user) => (
+          {sliceUsers.map((user, index) => (
             <tr key={user.id}>
-              <th>{user.id}</th>
+              <th>{index + 1}</th>
               <th>{user.firstName}</th>
               <th>{user.lastName}</th>
               <th>{user.phone}</th>

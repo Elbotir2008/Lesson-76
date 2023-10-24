@@ -4,14 +4,22 @@ import { Button, Modal } from "react-bootstrap";
 import { addUser, fetchUsers } from "../features/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 const Home = () => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
+
   const handleShow = () => setShow(true);
-  const [firstName, setFirtsname] = useState("");
-  const [lastName, setLastname] = useState("");
-  const [phone, setPhone] = useState(null);
-  const [group, setGroup] = useState("");
+  // const [firstName, setFirtsname] = useState("");
+  // const [lastName, setLastname] = useState("");
+  // const [phone, setPhone] = useState(null);
+  // const [group, setGroup] = useState("");
+  const [user, setUser] = useState({
+    firstName: "",
+    lastName: "",
+    phone: "",
+    group: "",
+  });
   const { users } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -19,15 +27,21 @@ const Home = () => {
   }, [dispatch]);
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(
-      addUser({
-        id: users[users.length - 1].id + 1,
-        firstName,
-        lastName,
-        phone,
-        group,
+    axios
+      .post("https://64dcf61be64a8525a0f76c4d.mockapi.io/api/v1/students", user)
+      .then((res) => {
+        dispatch(fetchUsers());
       })
-    );
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const handleChange = (e) => {
+    e.preventDefault();
+    setUser({
+      ...user,
+      [e.target.name]: e.target.value,
+    });
   };
 
   return (
@@ -63,48 +77,57 @@ const Home = () => {
         <Modal.Body>
           <form className="form-control" onSubmit={handleSubmit}>
             <div className="input1">
-              <label htmlFor="firstname">Firstname</label>
+              <label htmlFor="firstName">Firstname</label>
               <input
                 type="text"
                 className="form-control"
-                id="firstname"
-                name="firstname"
-                onChange={(e) => setFirtsname(e.target.value)}
+                id="firstName"
+                name="firstName"
+                onChange={handleChange}
+                value={user.firstName}
               />
             </div>
             <div className="input2">
-              <label htmlFor="lastname">Lastname</label>
+              <label htmlFor="lastName">Lastname</label>
               <input
                 type="text"
                 className="form-control"
-                id="lastname"
-                name="lastname"
-                onChange={(e) => setLastname(e.target.value)}
+                id="lastName"
+                name="lastName"
+                onChange={handleChange}
+                value={user.lastName}
               />
             </div>
             <div className="input3">
-              <label htmlFor="number">Number</label>
+              <label htmlFor="phone">Number</label>
               <input
                 type="text"
                 className="form-control"
-                id="number"
-                name="number"
-                onChange={(e) => setPhone(e.target.value)}
+                id="phone"
+                name="phone"
+                onChange={handleChange}
+                value={user.phone}
               />
             </div>
             <div className="input4">
               <label htmlFor="group">Group</label>
               <input
                 type="text"
-                className="form-control"
+                className="form-control mb-4"
                 id="group"
                 name="group"
-                onChange={(e) => setGroup(e.target.value)}
+                onChange={handleChange}
+                value={user.group}
               />
               <Button variant="secondary" onClick={handleClose}>
                 Close
               </Button>
-              <Button variant="primary" onClick={handleClose} type="submit">
+              <Button
+                variant="primary"
+                className="ms-3"
+                onClick={handleClose}
+                type="submit"
+              >
                 Save Changes
               </Button>
             </div>
